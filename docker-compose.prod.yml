@@ -1,0 +1,19 @@
+version: '3.8'
+# NOTE: Not using cache_from. If your docker build is taking too long, you can add to a Jenkins pipeline that periodically builds and publishes
+# a production Docker image so that its layers can be used as a build cache. https://docs.docker.com/engine/reference/commandline/build/#cache-from
+# Please consult with Platform team if you require a build cache for production Docker images
+
+services:
+  certtool:
+    build:
+      cache_from:
+        - ${REMOTE_REGISTRY:-}prod-certtool:latest
+      target: certtool-prod
+        
+    image: ${REMOTE_REGISTRY:-}prod-certtool:latest
+    # overwrite command, so that it uses the CMD in the Docker image
+    command: ""
+    environment:
+      - UWSGI_WORKERS=2
+      - ENVIRONMENT=${ENVIRONMENT:-prod}
+

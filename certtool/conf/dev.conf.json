@@ -1,0 +1,14 @@
+{
+    "DB_PASS": {
+        "val": "postgres"
+    },
+    "DEBUG": {
+        "val": "true"
+    },
+    "ENVIRONMENT": {
+        "val": "dev"
+    },
+    "SECRET_KEY": {
+        "val": "RpADLJWvoodzBYCcJzqDqopPkmAtqRfgrcMCuxOPHrFOAHzMRJ"
+    }
+}

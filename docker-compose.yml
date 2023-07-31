@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  certtool:
+    build:
+      cache_from:
+        - ${REMOTE_REGISTRY:-}dev-certtool:latest
+      context: ../../../
+      dockerfile: services/platform/certtool/Dockerfile
+      target: certtool-dev
+      # The build for prod (.jenkins/bash/certtool/build-image.sh) defines the version
+      args:
+        VERSION: ${VERSION:-0.0}
+    image: ${REMOTE_REGISTRY:-}dev-certtool:latest
+    ports:
+      - "4443:8000"
+    command: /bin/bash -c "/home/app/manage.py runserver 0.0.0.0:8000"
+    environment:
+      - UWSGI_WORKERS=2
+      - ENVIRONMENT=${ENVIRONMENT:-dev}
+    volumes:
+      - ${SSH_HOME:-.}/.ssh:/root/.ssh/
+    depends_on:
+      - db
+  db:
+    build:
+      cache_from:
+        - ${REMOTE_REGISTRY:-}dev-db:latest
+      context: ../../../docker/db
+    image: ${REMOTE_REGISTRY:-}dev-db:latest
+    stop_grace_period: 1s
+    environment:
+      - POSTGRES_DB=cedar
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - type: bind
+        source: ./db/initdb/
+        target: /docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+
+networks:
+  default:
+    name: certtool_network

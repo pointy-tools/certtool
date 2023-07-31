@@ -1,0 +1,4 @@
+^services/platform/certtool/
+^docker-compose.yml
+^docker-compose.override.yml
+^docker/db/
